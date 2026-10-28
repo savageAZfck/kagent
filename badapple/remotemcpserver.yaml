@@ -1,0 +1,11 @@
+apiVersion: kagent.dev/v1alpha2
+kind: RemoteMCPServer
+metadata:
+  name: badapple
+  namespace: kagent
+spec:
+  description: "Bad Apple organism — sovereign on-device agent, MCP surface on host Mac"
+  url: http://host.docker.internal:9879/sse
+  protocol: SSE
+  allowedNamespaces:
+    from: All
