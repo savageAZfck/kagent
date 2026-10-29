@@ -1,0 +1,35 @@
+# Bad Apple as a kagent BYO agent.
+# The shim (savageazfck/badapple-shim) serves A2A and forwards to the
+# Bad Apple daemon's MCP JSON-RPC endpoint. BADAPPLE_RPC_URL points at the
+# host running Bad Apple — over WireGuard that is simply the peer IP.
+apiVersion: api.kagent.dev/v1alpha3
+kind: Harness
+metadata:
+  name: badapple
+  namespace: kagent
+spec:
+  byo: {}
+  workload:
+    image: "savageazfck/badapple-shim@sha256:f6d64aa3bd52e3737d7119dba4ebbd58425e1f362ab84bdf8afa3732ee657d23"
+    command: ["/badapple-shim"]
+  env:
+    - name: BADAPPLE_RPC_URL
+      # <mac-ip-or-wg-peer>:9879 — the daemon's MCP endpoint. It binds
+      # loopback on the Mac, so expose it with socat or point WireGuard
+      # at the peer and let the tunnel reach 127.0.0.1 via host networking.
+      value: "http://BADAPPLE_HOST:9879/rpc"
+---
+apiVersion: api.kagent.dev/v1alpha3
+kind: Agent
+metadata:
+  name: badapple
+  namespace: kagent
+spec:
+  template:
+    inline:
+      description: "Bad Apple: sovereign dual-brained organism on Apple Silicon"
+      systemPrompt: |
+        You are the kagent-facing shell for Bad Apple. Forward user intent
+        to the organism and return her response verbatim.
+  harnessRef:
+    name: badapple
